@@ -17,13 +17,34 @@ inputs:
     required: false
     default: '.'
 outputs:
+  bento-tag:
+    description: 'Bento tag'
+    value: ${{ steps.build.outputs.bento-tag }}
   bento-name:
     description: 'Bento name'
+    value: ${{ steps.build.outputs.bento-name }}
   bento-version:
     description: 'Bento version'
+    value: ${{ steps.build.outputs.bento-version }}
   metadata:
     description: 'Build result metadata (equivalent of `bentoml get <bento_name>:<bento_version>`)'
+    value: ${{ steps.build.outputs.bento-metadata }}
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
-  post: 'dist/index.js'
+  using: 'composite'
+  steps:
+    - shell: bash
+      id: build
+      run: |
+        build_args=()
+        if [[ -n "${{ inputs.bentofile }}" ]]; then
+          build_args+=(--bentofile ${{ inputs.bentofile }})
+        fi
+        if [[ -n "${{ inputs.version }}" ]]; then
+          build_args+=(--version ${{ inputs.version }})
+        fi
+        bento_tag=$(bentoml build -o tag ${build_args[@]} ${{ inputs.context }})
+        bento_tag=${bento_tag##__tag__:}
+        echo "bento-tag=$bento_tag" >> $GITHUB_OUTPUT
+        echo "bento-name=$(echo $bento_tag | cut -d: -f1)" >> $GITHUB_OUTPUT
+        echo "bento-version=$(echo $bento_tag | cut -d: -f2)" >> $GITHUB_OUTPUT
+        echo "bento-metadata=$(bentoml get $bento_tag -o json)" >> $GITHUB_OUTPUT
