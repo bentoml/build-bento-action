@@ -1,5 +1,5 @@
 # https://help.github.com/en/articles/metadata-syntax-for-github-actions
-name: Bento build
+name: Build Bento bundle with GitHub Action
 description: Build Bento with GitHub Action
 author: bentoml
 branding:
