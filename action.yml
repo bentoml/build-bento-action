@@ -1,0 +1,28 @@
+# https://help.github.com/en/articles/metadata-syntax-for-github-actions
+name: Bento build
+description: Build Bento with GitHub Action
+author: bentoml
+branding:
+  icon: 'anchor'
+  color: 'blue'
+inputs:
+  bentofile:
+    description: "Optional path to bentofile.yaml"
+    required: false
+  version:
+    description: "Optional version for this given Bento. By default this will be auto-generated"
+    required: false
+  context:
+    description: "Build's context is the set of files located in the specified PATH or URL"
+    required: false
+outputs:
+  bento-name:
+    description: 'Bento name'
+  bento-version:
+    description: 'Bento version'
+  metadata:
+    description: 'Build result metadata (equivalent of `bentoml get <bento_name>:<bento_version>`)'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
+  post: 'dist/index.js'
