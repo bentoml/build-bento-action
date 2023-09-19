@@ -47,4 +47,7 @@ runs:
         echo "bento-tag=$bento_tag" >> $GITHUB_OUTPUT
         echo "bento-name=$(echo $bento_tag | cut -d: -f1)" >> $GITHUB_OUTPUT
         echo "bento-version=$(echo $bento_tag | cut -d: -f2)" >> $GITHUB_OUTPUT
-        echo "bento-metadata=$(bentoml get $bento_tag -o json)" >> $GITHUB_OUTPUT
+        # Multiline string for gh action https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+        echo "bento-metadata<<EOF" >> $GITHUB_OUTPUT
+        echo "$(bentoml get $bento_tag -o json)" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
